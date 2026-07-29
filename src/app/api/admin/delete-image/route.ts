@@ -13,18 +13,28 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const imagePath = body.imagePath;
 
-    if (!imagePath) {
+    if (!imagePath || typeof imagePath !== "string") {
       return NextResponse.json({ error: "No image path provided" }, { status: 400 });
     }
 
-    // Only allow deleting from /images directory
-    if (!imagePath.startsWith("/images/")) {
+    // SECURITY: don't trust the raw path — a string like
+    // "/images/../../../etc/passwd" still passes a naive startsWith("/images/")
+    // check and can escape the intended directory once path.join() resolves it.
+    // Instead, take only the basename and require it to match the exact
+    // filename format this app itself generates (random hex + known extension).
+    const filename = path.basename(imagePath);
+    const SAFE_FILENAME = /^[a-f0-9]{32}\.(png|jpe?g|gif|webp)$/i;
+    if (!SAFE_FILENAME.test(filename)) {
       return NextResponse.json({ error: "Invalid image path" }, { status: 400 });
     }
 
-    // Remove leading slash and build file path
-    const relativePath = imagePath.slice(1);
-    const fullPath = path.join(process.cwd(), relativePath);
+    const imagesDir = path.join(process.cwd(), "public", "images");
+    const fullPath = path.join(imagesDir, filename);
+
+    // Defense in depth: confirm the resolved path is still inside imagesDir
+    if (!fullPath.startsWith(imagesDir + path.sep)) {
+      return NextResponse.json({ error: "Invalid image path" }, { status: 400 });
+    }
 
     try {
       await fs.access(fullPath);
