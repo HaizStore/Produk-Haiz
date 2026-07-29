@@ -33,6 +33,12 @@ interface TokenPayload {
 function getSecret(): string {
   const secret = process.env.ADMIN_JWT_SECRET;
   if (!secret || secret.length < 24) {
+    // During build (vercel build), this might not be set yet.
+    // Return a dummy secret to avoid build crash, but log warning.
+    if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_JWT_SECRET) {
+      console.warn('[WARN] ADMIN_JWT_SECRET not set — admin login will fail. Set it in Vercel Environment Variables.');
+      return 'build-time-dummy-secret-do-not-use-in-production';
+    }
     throw new Error(
       "ADMIN_JWT_SECRET env var must be set (min 24 chars) — generate with `openssl rand -hex 32`"
     );
