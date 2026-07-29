@@ -33,9 +33,13 @@ interface TokenPayload {
 function getSecret(): string {
   const secret = process.env.ADMIN_JWT_SECRET;
   if (!secret || secret.length < 24) {
-    // During build (vercel build), this might not be set yet.
-    // Return a dummy secret to avoid build crash, but log warning.
-    if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_JWT_SECRET) {
+    // SECURITY: NODE_ENV is "production" both during `next build` AND while
+    // serving real traffic on Vercel — using it alone to detect "build time"
+    // meant a missing env var at runtime would silently fall back to this
+    // hardcoded secret, letting anyone forge a valid admin token. Next.js
+    // sets NEXT_PHASE only during the build step, so use that instead to
+    // make sure the dummy value is never reachable while serving requests.
+    if (process.env.NEXT_PHASE === 'phase-production-build' && !process.env.ADMIN_JWT_SECRET) {
       console.warn('[WARN] ADMIN_JWT_SECRET not set — admin login will fail. Set it in Vercel Environment Variables.');
       return 'build-time-dummy-secret-do-not-use-in-production';
     }
