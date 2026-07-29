@@ -18,7 +18,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "img-src 'self' data: https://cdn-icons-png.flaticon.com",
-              "script-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
               "connect-src 'self'",
               "frame-ancestors 'none'",
