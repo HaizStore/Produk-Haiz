@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
-import { formatRupiah } from "@/lib/format";
+import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/lib/cart-context";
+import { useLanguage } from "@/lib/i18n";
 
 export default function ProductCard({
   product,
@@ -16,6 +17,7 @@ export default function ProductCard({
   const availability = product.availability || "in_stock";
   const isAvailable = availability === "in_stock";
   const { addItem } = useCart();
+  const { lang, t } = useLanguage();
   const [added, setAdded] = useState(false);
 
   function handleAddToCart(e: React.MouseEvent) {
@@ -32,15 +34,15 @@ export default function ProductCard({
         <img src={product.image} alt={product.name} className="card-img" />
         <div className="card-body">
           <div className="card-name">{product.name}</div>
-          <div className="card-price">{formatRupiah(product.price)}</div>
+          <div className="card-price">{formatPrice(product.price, lang)}</div>
           <div className="card-meta">
-            <span>Terjual {product.sold}</span>
+            <span>{t("card_sold")} {product.sold}</span>
             <span style={isAvailable && product.stock <= 3 ? { color: "var(--red)", fontWeight: 700 } : undefined}>
-              Stok {isAvailable ? product.stock : 0}
-              {isAvailable && product.stock <= 3 ? " (Hampir Habis!)" : ""}
+              {t("card_stock")} {isAvailable ? product.stock : 0}
+              {isAvailable && product.stock <= 3 ? t("card_low_stock") : ""}
             </span>
             <span className={`badge-stock ${isAvailable ? "in" : "out"}`}>
-              {isAvailable ? "Tersedia" : availability === "pre_order" ? "Pre-Order" : "Habis"}
+              {isAvailable ? t("card_available") : availability === "pre_order" ? t("card_preorder") : t("card_soldout")}
             </span>
           </div>
         </div>
@@ -48,7 +50,7 @@ export default function ProductCard({
 
       <div className="card-actions" style={{ padding: '0 16px 16px 16px', display: 'flex', gap: '8px' }}>
         <Link href={`/product/${product.id}`} className="btn" style={{ flex: 1, textAlign: 'center' }}>
-          Detail
+          {t("card_detail")}
         </Link>
         <button
           className="btn primary"
@@ -56,14 +58,14 @@ export default function ProductCard({
           disabled={!isAvailable && availability !== "pre_order"}
           onClick={(e) => { e.stopPropagation(); onBuy(product); }}
         >
-          {isAvailable ? "Beli" : availability === "pre_order" ? "Pre-Order" : "Habis"}
+          {isAvailable ? t("card_buy") : availability === "pre_order" ? t("card_preorder") : t("card_soldout")}
         </button>
         <button
           className={`btn cart-add-btn ${added ? "added" : ""}`}
           disabled={!isAvailable}
           onClick={handleAddToCart}
-          title="Tambah ke keranjang"
-          aria-label="Tambah ke keranjang"
+          title={t("card_add_to_cart")}
+          aria-label={t("card_add_to_cart")}
         >
           {added ? "✓" : "🛒"}
         </button>
