@@ -46,6 +46,10 @@ export default function ProductDetail({
             <div className="card-meta" style={{ margin: "10px 0" }}>
               <span>Min. beli {product.minBuy}</span>
               <span>Terjual {product.sold}</span>
+              <span style={isAvailable && product.stock <= 3 ? { color: "var(--red)", fontWeight: 700 } : undefined}>
+                Stok {isAvailable ? product.stock : 0}
+                {isAvailable && product.stock <= 3 ? " (Hampir Habis!)" : ""}
+              </span>
               <span className={`badge-stock ${isAvailable ? "in" : "out"}`}>
                 {isAvailable ? "Tersedia" : availability === "pre_order" ? "Pre-Order" : "Habis"}
               </span>
