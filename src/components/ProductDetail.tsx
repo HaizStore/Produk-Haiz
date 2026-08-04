@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Product, StoreConfig } from "@/lib/types";
-import { formatRupiah } from "@/lib/format";
+import { formatPrice } from "@/lib/currency";
+import { useLanguage } from "@/lib/i18n";
 import BuyModal from "./BuyModal";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function ProductDetail({
   product,
@@ -14,6 +16,7 @@ export default function ProductDetail({
   config: StoreConfig;
 }) {
   const [open, setOpen] = useState(false);
+  const { lang, t } = useLanguage();
   const availability = product.availability || "in_stock";
   const isAvailable = availability === "in_stock";
 
@@ -26,8 +29,9 @@ export default function ProductDetail({
             {config.storeName}
           </Link>
           <div className="header-links">
+            <LanguageSwitcher />
             <Link href="/" className="pill-btn">
-              ← Kembali
+              {t("nav_back")}
             </Link>
           </div>
         </div>
@@ -41,17 +45,17 @@ export default function ProductDetail({
           <div>
             <h1 style={{ fontSize: 24, margin: "0 0 8px" }}>{product.name}</h1>
             <div style={{ color: "var(--gold-bright)", fontSize: 26, fontWeight: 800 }}>
-              {formatRupiah(product.price)}
+              {formatPrice(product.price, lang)}
             </div>
             <div className="card-meta" style={{ margin: "10px 0" }}>
-              <span>Min. beli {product.minBuy}</span>
-              <span>Terjual {product.sold}</span>
+              <span>{t("detail_min_buy")} {product.minBuy}</span>
+              <span>{t("card_sold")} {product.sold}</span>
               <span style={isAvailable && product.stock <= 3 ? { color: "var(--red)", fontWeight: 700 } : undefined}>
-                Stok {isAvailable ? product.stock : 0}
-                {isAvailable && product.stock <= 3 ? " (Hampir Habis!)" : ""}
+                {t("card_stock")} {isAvailable ? product.stock : 0}
+                {isAvailable && product.stock <= 3 ? t("card_low_stock") : ""}
               </span>
               <span className={`badge-stock ${isAvailable ? "in" : "out"}`}>
-                {isAvailable ? "Tersedia" : availability === "pre_order" ? "Pre-Order" : "Habis"}
+                {isAvailable ? t("card_available") : availability === "pre_order" ? t("card_preorder") : t("card_soldout")}
               </span>
             </div>
             <button
@@ -60,7 +64,7 @@ export default function ProductDetail({
               disabled={!isAvailable && availability !== "pre_order"}
               onClick={() => setOpen(true)}
             >
-              {isAvailable ? "Beli Sekarang" : availability === "pre_order" ? "Pre-Order Sekarang" : "Stok Habis"}
+              {isAvailable ? t("detail_buy_now") : availability === "pre_order" ? t("detail_preorder_now") : t("detail_out_of_stock")}
             </button>
             <div className="detail-desc">{product.description}</div>
           </div>
