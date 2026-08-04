@@ -2,6 +2,8 @@
 
 import { useCart } from "@/lib/cart-context";
 import { formatRupiah } from "@/lib/format";
+import { formatPrice } from "@/lib/currency";
+import { useLanguage } from "@/lib/i18n";
 import { StoreConfig } from "@/lib/types";
 
 export default function CartDrawer({
@@ -12,7 +14,9 @@ export default function CartDrawer({
   onClose: () => void;
 }) {
   const { items, removeItem, updateQty, totalPrice, clearCart } = useCart();
+  const { lang, t } = useLanguage();
 
+  // WA message to the seller always stays in Indonesian regardless of UI language
   const waMessage = encodeURIComponent(
     `Halo ${config.storeName}, saya mau pesan:\n\n` +
       items
@@ -26,10 +30,10 @@ export default function CartDrawer({
     <div className="overlay" onClick={onClose}>
       <div className="modal cart-modal" onClick={(e) => e.stopPropagation()}>
         <button className="close-x" onClick={onClose}>✕</button>
-        <h3 style={{ marginTop: 4, marginBottom: 16 }}>Keranjang Belanja</h3>
+        <h3 style={{ marginTop: 4, marginBottom: 16 }}>{t("cart_title")}</h3>
 
         {items.length === 0 ? (
-          <div className="empty-state">Keranjang kamu masih kosong.</div>
+          <div className="empty-state">{t("cart_empty")}</div>
         ) : (
           <>
             <div className="cart-items">
@@ -39,7 +43,7 @@ export default function CartDrawer({
                   <img src={i.product.image} alt={i.product.name} />
                   <div className="cart-item-info">
                     <div className="cart-item-name">{i.product.name}</div>
-                    <div className="cart-item-price">{formatRupiah(i.product.price)}</div>
+                    <div className="cart-item-price">{formatPrice(i.product.price, lang)}</div>
                     <div className="cart-item-qty">
                       <button onClick={() => updateQty(i.product.id, i.qty - 1)} aria-label="Kurangi">−</button>
                       <span>{i.qty}</span>
@@ -51,7 +55,7 @@ export default function CartDrawer({
                         +
                       </button>
                       <button className="cart-item-remove" onClick={() => removeItem(i.product.id)}>
-                        Hapus
+                        {t("cart_remove")}
                       </button>
                     </div>
                   </div>
@@ -60,9 +64,12 @@ export default function CartDrawer({
             </div>
 
             <div className="cart-total">
-              <span>Total</span>
-              <span>{formatRupiah(totalPrice)}</span>
+              <span>{t("cart_total")}</span>
+              <span>{formatPrice(totalPrice, lang)}</span>
             </div>
+            {lang === "en" && (
+              <div style={{ fontSize: 11, color: "var(--text-dim)", marginTop: 6, lineHeight: 1.5 }}>{t("buy_idr_note")}</div>
+            )}
 
             <a
               href={waLink}
@@ -72,7 +79,7 @@ export default function CartDrawer({
               style={{ display: "block", marginTop: 12, textAlign: "center" }}
               onClick={() => setTimeout(clearCart, 800)}
             >
-              Checkout via WhatsApp
+              {t("cart_checkout")}
             </a>
           </>
         )}
