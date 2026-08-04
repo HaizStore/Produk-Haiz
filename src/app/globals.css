@@ -849,3 +849,21 @@ button {
   font-size: 15px;
   font-weight: 800;
 }
+
+/* ---- Language switcher + header wrap fix (now 4 buttons in header-links) ---- */
+.header-links {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.lang-switch {
+  cursor: pointer;
+  font: inherit;
+  background: transparent;
+}
+
+@media (max-width: 480px) {
+  .header-links {
+    gap: 6px;
+  }
+}
