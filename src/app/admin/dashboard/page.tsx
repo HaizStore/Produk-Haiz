@@ -301,6 +301,11 @@ export default function AdminDashboard() {
             </div>
 
             <div className="field">
+              <label>Stok Tersedia</label>
+              <input type="number" min={0} value={form.stock ?? 0} onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })} />
+            </div>
+
+            <div className="field">
               <label>Jumlah Terjual</label>
               <input type="number" min={0} value={form.sold ?? 0} onChange={(e) => setForm({ ...form, sold: Number(e.target.value) })} />
             </div>
@@ -312,12 +317,13 @@ export default function AdminDashboard() {
           </form>
 
           <table className="table">
-            <thead><tr><th>Nama</th><th>Kategori</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Nama</th><th>Kategori</th><th>Stok</th><th>Status</th><th></th></tr></thead>
             <tbody>
               {products.map((p) => (
                 <tr key={p.id}>
                   <td>{p.name}</td>
                   <td>{categories.find(c => c.id === p.categoryId)?.name || "-"}</td>
+                  <td style={p.stock <= 3 ? { color: "var(--red)", fontWeight: 700 } : undefined}>{p.stock}</td>
                   <td>{p.availability === "in_stock" ? "Tersedia" : "Pre-Order"}</td>
                   <td style={{ display: "flex", gap: 6 }}>
                     <button className="btn" onClick={() => startEdit(p)}>Edit</button>
