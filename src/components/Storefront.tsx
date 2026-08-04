@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Product, StoreConfig, Category } from "@/lib/types";
 import ProductCard from "./ProductCard";
 import BuyModal from "./BuyModal";
+import CartDrawer from "./CartDrawer";
 import Testimonials from "./Testimonials";
+import { useCart } from "@/lib/cart-context";
 
 export default function Storefront({
   products,
@@ -20,6 +22,8 @@ export default function Storefront({
   const [search, setSearch] = useState("");
   const [layoutMode, setLayoutMode] = useState<"navbar" | "sidebar">("navbar");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { totalItems } = useCart();
 
   const filteredProducts = products
     .filter((p) => (activeCat === "all" ? true : p.categoryId === activeCat))
@@ -107,6 +111,10 @@ export default function Storefront({
             <a className="pill-btn" href={config.linktreeUrl} target="_blank" rel="noopener noreferrer">
               🔗 Komunitas
             </a>
+            <button className="pill-btn cart-btn" onClick={() => setCartOpen(true)}>
+              🛒 Keranjang
+              {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+            </button>
             <a className="pill-btn solid" href={`https://wa.me/${config.whatsapp}`} target="_blank" rel="noopener noreferrer">
               💬 WhatsApp
             </a>
@@ -169,6 +177,7 @@ export default function Storefront({
       </footer>
 
       {selected && <BuyModal product={selected} config={config} onClose={() => setSelected(null)} />}
+      {cartOpen && <CartDrawer config={config} onClose={() => setCartOpen(false)} />}
     </>
   );
 }
