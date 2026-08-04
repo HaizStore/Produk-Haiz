@@ -6,7 +6,9 @@ import ProductCard from "./ProductCard";
 import BuyModal from "./BuyModal";
 import CartDrawer from "./CartDrawer";
 import Testimonials from "./Testimonials";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useCart } from "@/lib/cart-context";
+import { useLanguage } from "@/lib/i18n";
 
 export default function Storefront({
   products,
@@ -24,6 +26,7 @@ export default function Storefront({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { totalItems } = useCart();
+  const { t } = useLanguage();
 
   const filteredProducts = products
     .filter((p) => (activeCat === "all" ? true : p.categoryId === activeCat))
@@ -50,7 +53,7 @@ export default function Storefront({
           setSidebarOpen(false);
         }}
       >
-        Semua Produk
+        {t("category_all")}
       </button>
       {categories.map((c) => (
         <button
@@ -77,7 +80,7 @@ export default function Storefront({
         </div>
       ) : (
         <div className="empty-state">
-          Produk “{search}” tidak ditemukan.
+          {t("not_found_prefix")}“{search}”{t("not_found_suffix")}
         </div>
       )}
     </>
@@ -108,15 +111,16 @@ export default function Storefront({
             </div>
           </div>
           <div className="header-links">
+            <LanguageSwitcher />
             <a className="pill-btn" href={config.linktreeUrl} target="_blank" rel="noopener noreferrer">
-              🔗 Komunitas
+              {t("nav_community")}
             </a>
             <button className="pill-btn cart-btn" onClick={() => setCartOpen(true)}>
-              🛒 Keranjang
+              {t("nav_cart")}
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </button>
             <a className="pill-btn solid" href={`https://wa.me/${config.whatsapp}`} target="_blank" rel="noopener noreferrer">
-              💬 WhatsApp
+              {t("nav_whatsapp")}
             </a>
           </div>
         </div>
@@ -133,7 +137,7 @@ export default function Storefront({
           <span aria-hidden>🔍</span>
           <input
             type="text"
-            placeholder="Cari produk..."
+            placeholder={t("search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -156,13 +160,13 @@ export default function Storefront({
             {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
 
             <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-              <div className="sidebar-title">Kategori</div>
+              <div className="sidebar-title">{t("category_label")}</div>
               <CategoryList vertical />
             </aside>
 
             <div>
               <button className="mobile-sidebar-toggle" onClick={() => setSidebarOpen(true)}>
-                ☰ Kategori
+                {t("mobile_category_toggle")}
               </button>
               <ProductGrid />
             </div>
@@ -173,7 +177,7 @@ export default function Storefront({
       </div>
 
       <footer className="footer">
-        © {new Date().getFullYear()} {config.storeName} · Semua transaksi diproses manual & aman
+        © {new Date().getFullYear()} {config.storeName} · {t("footer_note")}
       </footer>
 
       {selected && <BuyModal product={selected} config={config} onClose={() => setSelected(null)} />}
