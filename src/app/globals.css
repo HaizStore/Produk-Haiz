@@ -651,3 +651,201 @@ button {
     font-size: 24px;
   }
 }
+
+/* ---- Cart button (header) ---- */
+.cart-btn {
+  position: relative;
+  cursor: pointer;
+  font: inherit;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ---- Add-to-cart icon button on product cards ---- */
+.cart-add-btn {
+  flex: 0 0 auto;
+  width: 40px;
+  padding: 0;
+  font-size: 16px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cart-add-btn.added {
+  background: var(--green, #3ecf6a);
+  color: #0b0b0d;
+  border-color: var(--green, #3ecf6a);
+}
+
+/* ---- Cart drawer / modal ---- */
+.cart-modal {
+  max-width: 420px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-items {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.cart-item {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.cart-item img {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-price {
+  font-size: 12px;
+  color: var(--gold-bright);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cart-item-qty button {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-2);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cart-item-qty button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cart-item-qty span {
+  min-width: 16px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cart-item-remove {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--red);
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Mobile tweaks for cart ---- */
+@media (max-width: 480px) {
+  .cart-add-btn {
+    width: 34px;
+    font-size: 14px;
+  }
+
+  .cart-modal {
+    max-width: 100%;
+  }
+}
+
+/* ---- Quantity selector in BuyModal (instant buy) ---- */
+.qty-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.qty-label {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qty-controls button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-2);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.qty-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qty-controls span {
+  min-width: 20px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+}
