@@ -9,7 +9,11 @@ function validate(p: Partial<Product>): string | null {
   if (!p.name || !p.name.trim()) return "name is required";
   if (p.name.length > 200) return "name too long";
   if (p.description && p.description.length > 5000) return "description too long";
+  if (p.descriptionEn && p.descriptionEn.length > 5000) return "descriptionEn too long";
   if (typeof p.price !== "number" || p.price < 0) return "price must be >= 0";
+  if (p.originalPrice !== undefined && p.originalPrice !== null && (typeof p.originalPrice !== "number" || p.originalPrice < 0)) {
+    return "originalPrice must be >= 0";
+  }
   if (typeof p.stock !== "number" || p.stock < 0) return "stock must be >= 0";
   return null;
 }
@@ -40,11 +44,13 @@ export async function PUT(
     ...existing,
     name: body.name!.trim(),
     price: body.price!,
+    originalPrice: body.originalPrice && body.originalPrice > body.price! ? body.originalPrice : undefined,
     image: body.image ?? existing.image,
     stock: body.stock ?? existing.stock,
     sold: body.sold ?? existing.sold,
     minBuy: body.minBuy && body.minBuy > 0 ? body.minBuy : existing.minBuy,
     description: body.description ?? existing.description,
+    descriptionEn: body.descriptionEn ?? existing.descriptionEn,
     active: body.active ?? existing.active,
     categoryId: body.categoryId ?? existing.categoryId,
     availability: (body.availability as "in_stock" | "pre_order") || existing.availability || "in_stock",
