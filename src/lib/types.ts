@@ -2,11 +2,13 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  originalPrice?: number;
   image: string;
   stock: number;
   sold: number;
   minBuy: number;
   description: string;
+  descriptionEn?: string;
   active: boolean;
   availability?: "in_stock" | "pre_order";
   categoryId?: string;
