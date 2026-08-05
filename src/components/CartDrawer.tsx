@@ -1,10 +1,48 @@
 "use client";
 
-import { useCart } from "@/lib/cart-context";
+import { CartItem, useCart } from "@/lib/cart-context";
 import { formatRupiah } from "@/lib/format";
-import { formatPrice } from "@/lib/currency";
 import { useLanguage } from "@/lib/i18n";
+import { useAutoTranslate } from "@/lib/use-auto-translate";
 import { StoreConfig } from "@/lib/types";
+
+function CartItemRow({
+  item,
+  onUpdateQty,
+  onRemove,
+}: {
+  item: CartItem;
+  onUpdateQty: (id: string, qty: number) => void;
+  onRemove: (id: string) => void;
+}) {
+  const { t } = useLanguage();
+  const name = useAutoTranslate(item.product.name);
+
+  return (
+    <div className="cart-item">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={item.product.image} alt={item.product.name} />
+      <div className="cart-item-info">
+        <div className="cart-item-name">{name}</div>
+        <div className="cart-item-price">{formatRupiah(item.product.price)}</div>
+        <div className="cart-item-qty">
+          <button onClick={() => onUpdateQty(item.product.id, item.qty - 1)} aria-label="Kurangi">−</button>
+          <span>{item.qty}</span>
+          <button
+            onClick={() => onUpdateQty(item.product.id, item.qty + 1)}
+            disabled={item.product.stock > 0 && item.qty >= item.product.stock}
+            aria-label="Tambah"
+          >
+            +
+          </button>
+          <button className="cart-item-remove" onClick={() => onRemove(item.product.id)}>
+            {t("cart_remove")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function CartDrawer({
   config,
@@ -14,7 +52,7 @@ export default function CartDrawer({
   onClose: () => void;
 }) {
   const { items, removeItem, updateQty, totalPrice, clearCart } = useCart();
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
 
   // WA message to the seller always stays in Indonesian regardless of UI language
   const waMessage = encodeURIComponent(
@@ -38,38 +76,14 @@ export default function CartDrawer({
           <>
             <div className="cart-items">
               {items.map((i) => (
-                <div className="cart-item" key={i.product.id}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={i.product.image} alt={i.product.name} />
-                  <div className="cart-item-info">
-                    <div className="cart-item-name">{i.product.name}</div>
-                    <div className="cart-item-price">{formatPrice(i.product.price, lang)}</div>
-                    <div className="cart-item-qty">
-                      <button onClick={() => updateQty(i.product.id, i.qty - 1)} aria-label="Kurangi">−</button>
-                      <span>{i.qty}</span>
-                      <button
-                        onClick={() => updateQty(i.product.id, i.qty + 1)}
-                        disabled={i.product.stock > 0 && i.qty >= i.product.stock}
-                        aria-label="Tambah"
-                      >
-                        +
-                      </button>
-                      <button className="cart-item-remove" onClick={() => removeItem(i.product.id)}>
-                        {t("cart_remove")}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <CartItemRow key={i.product.id} item={i} onUpdateQty={updateQty} onRemove={removeItem} />
               ))}
             </div>
 
             <div className="cart-total">
               <span>{t("cart_total")}</span>
-              <span>{formatPrice(totalPrice, lang)}</span>
+              <span>{formatRupiah(totalPrice)}</span>
             </div>
-            {lang === "en" && (
-              <div style={{ fontSize: 11, color: "var(--text-dim)", marginTop: 6, lineHeight: 1.5 }}>{t("buy_idr_note")}</div>
-            )}
 
             <a
               href={waLink}
