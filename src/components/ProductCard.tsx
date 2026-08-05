@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
-import { formatPrice } from "@/lib/currency";
+import { formatRupiah } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n";
+import { useAutoTranslate } from "@/lib/use-auto-translate";
 
 export default function ProductCard({
   product,
@@ -17,7 +18,8 @@ export default function ProductCard({
   const availability = product.availability || "in_stock";
   const isAvailable = availability === "in_stock";
   const { addItem } = useCart();
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
+  const displayName = useAutoTranslate(product.name);
   const [added, setAdded] = useState(false);
 
   const hasDiscount = !!product.originalPrice && product.originalPrice > product.price;
@@ -41,13 +43,13 @@ export default function ProductCard({
           {hasDiscount && <span className="discount-badge">-{discountPercent}%</span>}
         </div>
         <div className="card-body">
-          <div className="card-name">{product.name}</div>
+          <div className="card-name">{displayName}</div>
           <div className="card-price">
             {hasDiscount && (
-              <span className="card-price-original">{formatPrice(product.originalPrice!, lang)}</span>
+              <span className="card-price-original">{formatRupiah(product.originalPrice!)}</span>
             )}
             <span className={hasDiscount ? "card-price-discounted" : undefined}>
-              {formatPrice(product.price, lang)}
+              {formatRupiah(product.price)}
             </span>
           </div>
           <div className="card-meta">
