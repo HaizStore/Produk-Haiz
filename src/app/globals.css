@@ -867,3 +867,58 @@ button {
     gap: 6px;
   }
 }
+
+/* ---- Discount badge + strikethrough price ---- */
+.card-img-wrap {
+  position: relative;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 1;
+}
+
+.card-price-original {
+  text-decoration: line-through;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.card-price-discounted {
+  color: var(--red);
+}
+
+.detail-price-original {
+  text-decoration: line-through;
+  color: var(--text-dim);
+  font-size: 15px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.detail-price-discounted {
+  color: var(--red);
+}
+
+@media (max-width: 480px) {
+  .discount-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    top: 6px;
+    left: 6px;
+  }
+
+  .card-price-original {
+    font-size: 11px;
+  }
+}
