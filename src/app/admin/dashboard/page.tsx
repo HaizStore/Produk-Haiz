@@ -42,6 +42,7 @@ const emptyForm: Partial<Product> = {
   sold: 0,
   minBuy: 1,
   description: "",
+  descriptionEn: "",
   active: true,
   availability: "in_stock",
 };
@@ -274,6 +275,19 @@ export default function AdminDashboard() {
             </div>
 
             <div className="field">
+              <label>Harga Asli (opsional — isi kalau produk lagi diskon, akan dicoret)</label>
+              <input type="text" inputMode="numeric" value={form.originalPrice?.toLocaleString("id-ID") || ""} onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "");
+                setForm({ ...form, originalPrice: val ? Number(val) : undefined });
+              }} placeholder="Kosongkan kalau tidak diskon" />
+              {!!form.originalPrice && !!form.price && form.originalPrice <= form.price && (
+                <div style={{ fontSize: 11, color: "var(--red)", marginTop: 4 }}>
+                  Harga asli harus lebih besar dari harga jual, kalau tidak diskon tidak akan ditampilkan.
+                </div>
+              )}
+            </div>
+
+            <div className="field">
               <label>Kategori</label>
               <select value={form.categoryId || ""} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
                 <option value="">Tanpa Kategori</option>
@@ -298,6 +312,11 @@ export default function AdminDashboard() {
             <div className="field">
               <label>Deskripsi Produk</label>
               <textarea value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ minHeight: 120 }} placeholder="Masukkan deskripsi produk..." />
+            </div>
+
+            <div className="field">
+              <label>Deskripsi Produk (English) — opsional, muncul kalau pembeli pilih EN</label>
+              <textarea value={form.descriptionEn || ""} onChange={(e) => setForm({ ...form, descriptionEn: e.target.value })} style={{ minHeight: 120 }} placeholder="Enter product description in English..." />
             </div>
 
             <div className="field">
