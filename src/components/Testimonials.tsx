@@ -1,10 +1,16 @@
+"use client";
+
 import { StoreConfig } from "@/lib/types";
+import { useAutoTranslate } from "@/lib/use-auto-translate";
 
 export default function Testimonials({ config }: { config: StoreConfig }) {
+  const title = useAutoTranslate(config.testimoniTitle || "Testimoni Pelanggan");
+  const text = useAutoTranslate(config.testimoniText || "Lihat testimoni kami di sosial media:");
+
   return (
     <div className="container" style={{ marginTop: 40, marginBottom: 40, textAlign: 'center' }}>
-      <div className="section-title">{config.testimoniTitle || "Testimoni Pelanggan"}</div>
-      <p style={{ color: 'var(--text-dim)', fontSize: 14, marginBottom: 20 }}>{config.testimoniText || "Lihat testimoni kami di sosial media:"}</p>
+      <div className="section-title">{title}</div>
+      <p style={{ color: 'var(--text-dim)', fontSize: 14, marginBottom: 20 }}>{text}</p>
       <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
         <a 
           href={config.tiktokUrl}
