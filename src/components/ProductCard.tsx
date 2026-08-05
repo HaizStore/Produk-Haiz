@@ -20,6 +20,11 @@ export default function ProductCard({
   const { lang, t } = useLanguage();
   const [added, setAdded] = useState(false);
 
+  const hasDiscount = !!product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
+    : 0;
+
   function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -31,10 +36,20 @@ export default function ProductCard({
   return (
     <div className="card">
       <Link href={`/product/${product.id}`} style={{ display: 'contents' }}>
-        <img src={product.image} alt={product.name} className="card-img" />
+        <div className="card-img-wrap">
+          <img src={product.image} alt={product.name} className="card-img" />
+          {hasDiscount && <span className="discount-badge">-{discountPercent}%</span>}
+        </div>
         <div className="card-body">
           <div className="card-name">{product.name}</div>
-          <div className="card-price">{formatPrice(product.price, lang)}</div>
+          <div className="card-price">
+            {hasDiscount && (
+              <span className="card-price-original">{formatPrice(product.originalPrice!, lang)}</span>
+            )}
+            <span className={hasDiscount ? "card-price-discounted" : undefined}>
+              {formatPrice(product.price, lang)}
+            </span>
+          </div>
           <div className="card-meta">
             <span>{t("card_sold")} {product.sold}</span>
             <span style={isAvailable && product.stock <= 3 ? { color: "var(--red)", fontWeight: 700 } : undefined}>
