@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Product, StoreConfig } from "@/lib/types";
-import { formatPrice } from "@/lib/currency";
+import { formatRupiah } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n";
+import { useAutoTranslate } from "@/lib/use-auto-translate";
 import BuyModal from "./BuyModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -23,6 +24,13 @@ export default function ProductDetail({
   const discountPercent = hasDiscount
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
     : 0;
+
+  const displayName = useAutoTranslate(product.name);
+  // If the admin filled in a manual English description, use that (better
+  // quality). Otherwise fall back to auto-translating the Indonesian one.
+  const autoTranslatedDesc = useAutoTranslate(product.description);
+  const displayDescription =
+    lang === "en" && product.descriptionEn ? product.descriptionEn : autoTranslatedDesc;
 
   return (
     <>
@@ -50,13 +58,13 @@ export default function ProductDetail({
             </div>
           </div>
           <div>
-            <h1 style={{ fontSize: 24, margin: "0 0 8px" }}>{product.name}</h1>
+            <h1 style={{ fontSize: 24, margin: "0 0 8px" }}>{displayName}</h1>
             <div style={{ fontSize: 26, fontWeight: 800 }}>
               {hasDiscount && (
-                <span className="detail-price-original">{formatPrice(product.originalPrice!, lang)}</span>
+                <span className="detail-price-original">{formatRupiah(product.originalPrice!)}</span>
               )}
               <span className={hasDiscount ? "detail-price-discounted" : ""} style={!hasDiscount ? { color: "var(--gold-bright)" } : undefined}>
-                {formatPrice(product.price, lang)}
+                {formatRupiah(product.price)}
               </span>
             </div>
             <div className="card-meta" style={{ margin: "10px 0" }}>
@@ -78,9 +86,7 @@ export default function ProductDetail({
             >
               {isAvailable ? t("detail_buy_now") : availability === "pre_order" ? t("detail_preorder_now") : t("detail_out_of_stock")}
             </button>
-            <div className="detail-desc">
-              {lang === "en" && product.descriptionEn ? product.descriptionEn : product.description}
-            </div>
+            <div className="detail-desc">{displayDescription}</div>
           </div>
         </div>
       </div>
