@@ -9,6 +9,7 @@ import Testimonials from "./Testimonials";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useCart } from "@/lib/cart-context";
 import { useLanguage } from "@/lib/i18n";
+import { useAutoTranslate } from "@/lib/use-auto-translate";
 
 export default function Storefront({
   products,
@@ -27,6 +28,9 @@ export default function Storefront({
   const [cartOpen, setCartOpen] = useState(false);
   const { totalItems } = useCart();
   const { t } = useLanguage();
+  const heroTitle = useAutoTranslate(config.heroTitle);
+  const heroSub = useAutoTranslate(config.heroSub);
+  const announcement = useAutoTranslate(config.announcement || "");
 
   const filteredProducts = products
     .filter((p) => (activeCat === "all" ? true : p.categoryId === activeCat))
@@ -128,9 +132,9 @@ export default function Storefront({
 
       <div className="container">
         <div className="hero">
-          <h1 className="hero-title">{config.heroTitle}</h1>
-          <p className="hero-sub">{config.heroSub}</p>
-          {config.announcement && <div className="announcement">{config.announcement}</div>}
+          <h1 className="hero-title">{heroTitle}</h1>
+          <p className="hero-sub">{heroSub}</p>
+          {config.announcement && <div className="announcement">{announcement}</div>}
         </div>
 
         <div className="search-bar">
