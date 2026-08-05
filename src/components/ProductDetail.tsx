@@ -19,6 +19,10 @@ export default function ProductDetail({
   const { lang, t } = useLanguage();
   const availability = product.availability || "in_stock";
   const isAvailable = availability === "in_stock";
+  const hasDiscount = !!product.originalPrice && product.originalPrice > product.price;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
+    : 0;
 
   return (
     <>
@@ -40,12 +44,20 @@ export default function ProductDetail({
       <div className="container">
         <div className="detail-wrap">
           <div>
-            <img src={product.image} alt={product.name} className="detail-img" />
+            <div style={{ position: "relative" }}>
+              <img src={product.image} alt={product.name} className="detail-img" />
+              {hasDiscount && <span className="discount-badge">-{discountPercent}%</span>}
+            </div>
           </div>
           <div>
             <h1 style={{ fontSize: 24, margin: "0 0 8px" }}>{product.name}</h1>
-            <div style={{ color: "var(--gold-bright)", fontSize: 26, fontWeight: 800 }}>
-              {formatPrice(product.price, lang)}
+            <div style={{ fontSize: 26, fontWeight: 800 }}>
+              {hasDiscount && (
+                <span className="detail-price-original">{formatPrice(product.originalPrice!, lang)}</span>
+              )}
+              <span className={hasDiscount ? "detail-price-discounted" : ""} style={!hasDiscount ? { color: "var(--gold-bright)" } : undefined}>
+                {formatPrice(product.price, lang)}
+              </span>
             </div>
             <div className="card-meta" style={{ margin: "10px 0" }}>
               <span>{t("detail_min_buy")} {product.minBuy}</span>
@@ -66,7 +78,9 @@ export default function ProductDetail({
             >
               {isAvailable ? t("detail_buy_now") : availability === "pre_order" ? t("detail_preorder_now") : t("detail_out_of_stock")}
             </button>
-            <div className="detail-desc">{product.description}</div>
+            <div className="detail-desc">
+              {lang === "en" && product.descriptionEn ? product.descriptionEn : product.description}
+            </div>
           </div>
         </div>
       </div>
