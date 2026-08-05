@@ -20,7 +20,7 @@ const nextConfig = {
               "img-src 'self' data: https://cdn-icons-png.flaticon.com",
               "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
-              "connect-src 'self'",
+              "connect-src 'self' https://api.mymemory.translated.net",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
